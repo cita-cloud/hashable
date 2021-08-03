@@ -133,6 +133,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::str::FromStr;
 
     #[test]
     #[cfg(feature = "sha3hash")]
@@ -144,7 +145,7 @@ mod tests {
     fn sha3_as() {
         assert_eq!(
             [0x41u8; 32].crypt_hash(),
-            From::from("59cad5948673622c1d64e2322488bf01619f7ff45789741b15a9f782ce9290a8")
+            H256::from_str("59cad5948673622c1d64e2322488bf01619f7ff45789741b15a9f782ce9290a8").unwrap()
         );
     }
 
@@ -158,7 +159,7 @@ mod tests {
     fn blake2b_as() {
         assert_eq!(
             [0x41u8; 32].crypt_hash(),
-            From::from("8a786e4840b7b5ad9b0cfa44539b886086c2e1050bb802c8e40ecf09b3a64a11")
+            H256::from_str("8a786e4840b7b5ad9b0cfa44539b886086c2e1050bb802c8e40ecf09b3a64a11").unwrap()
         );
     }
 
