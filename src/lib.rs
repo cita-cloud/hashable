@@ -12,13 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#[cfg(feature = "blake2bhash")]
-extern crate blake2b;
-#[cfg(feature = "sm3hash")]
-extern crate libsm;
-#[cfg(feature = "sha3hash")]
-extern crate tiny_keccak as sha3;
-
 use cita_types::H256;
 
 /// The hash of the empty bytes string.
@@ -106,16 +99,11 @@ where
     fn crypt_hash_into(&self, dest: &mut [u8]) {
         let input: &[u8] = self.as_ref();
 
-        unsafe {
-            blake2b::blake2b(
-                dest.as_mut_ptr(),
-                dest.len(),
-                input.as_ptr(),
-                input.len(),
-                BLAKE2BKEY.as_bytes().as_ptr(),
-                BLAKE2BKEY.len(),
-            );
-        }
+        let mut params = blake2b_simd::Params::new();
+        params.key(BLAKE2BKEY.as_bytes());
+        params.hash_length(32);
+        let hash = params.hash(input);
+        dest.copy_from_slice(hash.as_bytes());
     }
 }
 
@@ -145,7 +133,8 @@ mod tests {
     fn sha3_as() {
         assert_eq!(
             [0x41u8; 32].crypt_hash(),
-            H256::from_str("59cad5948673622c1d64e2322488bf01619f7ff45789741b15a9f782ce9290a8").unwrap()
+            H256::from_str("59cad5948673622c1d64e2322488bf01619f7ff45789741b15a9f782ce9290a8")
+                .unwrap()
         );
     }
 
@@ -159,7 +148,8 @@ mod tests {
     fn blake2b_as() {
         assert_eq!(
             [0x41u8; 32].crypt_hash(),
-            H256::from_str("8a786e4840b7b5ad9b0cfa44539b886086c2e1050bb802c8e40ecf09b3a64a11").unwrap()
+            H256::from_str("8a786e4840b7b5ad9b0cfa44539b886086c2e1050bb802c8e40ecf09b3a64a11")
+                .unwrap()
         );
     }
 
