@@ -1,5 +1,5 @@
 [package]
-name = "hashable"
+name = "cita-hashable"
 version = "0.1.0"
 authors = ["Rivtower Technologies <contact@rivtower.com>"]
 description = "Provide a switch to choice algorithm"
